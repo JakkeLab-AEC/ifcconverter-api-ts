@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npx tsc && npm pack"
+    "build": "npx tsc && npm pack --pack-destination ./packed/"
   },
   "dependencies": {
     "typescript": "^5.7.3"
