@@ -72,4 +72,4 @@ console.log("---MappingRules---");
 console.log(tableReader.exportTable().mappingEntity);
 
 console.log("---MappedItems---");
-console.log(writer.exportMappedItems());
+console.log(writer.exportMappedItems(tableReader));

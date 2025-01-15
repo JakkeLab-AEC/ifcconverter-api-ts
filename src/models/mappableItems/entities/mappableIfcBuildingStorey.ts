@@ -1,9 +1,10 @@
-import { MappableIfcClasses } from "../../mappingTable/mappingTableDefinition";
+import { MappingTableReader } from "models/mappingTable/mappingTableReader";
+import { MappableIfcClasses, UserArgs } from "../../mappingTable/mappingTableDefinition";
 import { MappableItem } from "../mappableItem";
 
 export class MappableIfcBuildingStorey extends MappableItem {
-    constructor(data: any) {
-        super(data, new Set(["name", "height"]), MappableIfcClasses.IfcBuildingStorey);
+    constructor(data: any, userKey: string) {
+        super(data, new Set(["name", "height"]), MappableIfcClasses.IfcBuildingStorey, userKey);
         if(this.isValid) {
             this.height = data.userArgs.height;
             this.name = data.userArgs.name;
@@ -20,11 +21,23 @@ export class MappableIfcBuildingStorey extends MappableItem {
         );
     }
 
-    export(): Object {
-        return {
-            ifcClass: MappableIfcClasses.IfcBuildingStorey,
-            name: this.name,
-            height: this.height
+    getUserArgs(mappingTable?: MappingTableReader): object {
+        if(mappingTable === undefined) {
+            return {
+                ifcClass: MappableIfcClasses.IfcBuildingStorey,
+                name: this.name,
+                height: this.height
+            }
+        } else {
+            const rule = mappingTable.getMappingRule(MappableIfcClasses.IfcBuildingStorey) as UserArgs<MappableIfcClasses.IfcBuildingStorey>;
+            if(rule !== undefined) {
+                return {
+                    [rule.userArgs.name]: this.name,
+                    [rule.userArgs.height]: this.height
+                }
+            } else {
+                return { }
+            }
         }
     }
 }

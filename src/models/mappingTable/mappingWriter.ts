@@ -49,7 +49,7 @@ export class MappingWriter {
             
         switch (mappingTableReader.getMappableIfcClass(item.userKey)) {
             case MappableIfcClasses.IfcBuildingStorey: {
-                const entity = new MappableIfcBuildingStorey({ userKey: item.userKey, userArgs: transformedArgs });
+                const entity = new MappableIfcBuildingStorey({ userKey: item.userKey, userArgs: transformedArgs }, item.userKey);
                 if (entity.isValid) {
                     this.mappedItem.push(entity);
                     return { result: true };
@@ -60,7 +60,7 @@ export class MappingWriter {
             }
     
             case MappableIfcClasses.IfcColumn: {
-                const entity = new MappableIfcColumn({ userKey: item.userKey, userArgs: transformedArgs });
+                const entity = new MappableIfcColumn({ userKey: item.userKey, userArgs: transformedArgs }, item.userKey);
                 if (entity.isValid) {
                     this.mappedItem.push(entity);
                     return { result: true };
@@ -71,7 +71,7 @@ export class MappingWriter {
             }
     
             case MappableIfcClasses.IfcBeam: {
-                const entity = new MappableIfcBeam({ userKey: item.userKey, userArgs: transformedArgs });
+                const entity = new MappableIfcBeam({ userKey: item.userKey, userArgs: transformedArgs }, item.userKey);
                 if (entity.isValid) {
                     this.mappedItem.push(entity);
                     return { result: true };
@@ -82,7 +82,7 @@ export class MappingWriter {
             }
 
             case MappableIfcClasses.IfcWallStandardCase: {
-                const entity = new MappableIfcWallStandardCase({userKey: item.userKey, userArgs: transformedArgs });
+                const entity = new MappableIfcWallStandardCase({userKey: item.userKey, userArgs: transformedArgs }, item.userKey);
                 if(entity.isValid) {
                     this.mappedItem.push(entity);
                     return { result: true };
@@ -107,7 +107,7 @@ export class MappingWriter {
         return this.unmappedItem;
     }
 
-    exportMappedItems():Array<Object> {
+    exportMappedItems(mappingTable?: MappingTableReader):Array<Object> {
         this.mappedItem.sort((a, b) => {
             if(a.ifcClass === MappableIfcClasses.IfcBuildingStorey && b.ifcClass !== MappableIfcClasses.IfcBuildingStorey) {
                 return -1;
@@ -120,6 +120,6 @@ export class MappingWriter {
             return 0;
         });
         
-        return this.mappedItem.map(item => item.export());
+        return this.mappedItem.map(item => item.export(mappingTable));
     }
 }

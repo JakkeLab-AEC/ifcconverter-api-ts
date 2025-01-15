@@ -1,9 +1,10 @@
-import { MappableIfcClasses } from "../../mappingTable/mappingTableDefinition";
+import { MappingTableReader } from "models/mappingTable/mappingTableReader";
+import { MappableIfcClasses, UserArgs } from "../../mappingTable/mappingTableDefinition";
 import { MappableItem } from "../mappableItem";
 
 export class MappableIfcColumn extends MappableItem {
-    constructor(data: any) {
-        super(data, new Set(["coordinate", "height", "rotation", "targetStorey"]), MappableIfcClasses.IfcColumn);
+    constructor(data: any, userKey: string) {
+        super(data, new Set(["coordinate", "height", "rotation", "targetStorey"]), MappableIfcClasses.IfcColumn, userKey);
         if(this.isValid) {
             this.coordinate = data.userArgs.coordinate;
             this.height = data.userArgs.height;
@@ -26,13 +27,27 @@ export class MappableIfcColumn extends MappableItem {
         );
     }
 
-    export(): Object {
-        return {
-            ifcClass: MappableIfcClasses.IfcColumn,
-            coordinate: this.coordinate,
-            height: this.height,
-            rotation: this.rotation,
-            targetStorey: this.targetStorey
+    getUserArgs(mappingTable?: MappingTableReader): object {
+        if(mappingTable === undefined) {
+            return {
+                ifcClass: MappableIfcClasses.IfcColumn,
+                coordinate: this.coordinate,
+                height: this.height,
+                rotation: this.rotation,
+                targetStorey: this.targetStorey
+            }
+        } else {
+            const rule = mappingTable.getMappingRule(MappableIfcClasses.IfcColumn) as UserArgs<MappableIfcClasses.IfcColumn>;
+            if(rule !== undefined) {
+                return {
+                    [rule.userArgs.coordinate]: this.coordinate,
+                    [rule.userArgs.height]: this.height,
+                    [rule.userArgs.rotation]: this.rotation,
+                    [rule.userArgs.targetStorey]: this.targetStorey
+                }
+            } else {
+                return { }
+            }
         }
     }
 }

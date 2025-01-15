@@ -1,9 +1,10 @@
-import { MappableIfcClasses } from "../../mappingTable/mappingTableDefinition";
+import { MappingTableReader } from "models/mappingTable/mappingTableReader";
+import { MappableIfcClasses, UserArgs } from "../../mappingTable/mappingTableDefinition";
 import { MappableItem } from "../mappableItem";
 
 export class MappableIfcWallStandardCase extends MappableItem{
-    constructor(data: any) {
-        super(data, new Set(["startPt","endPt", "height", "zOffset", "thickness", "targetStorey"]), MappableIfcClasses.IfcWallStandardCase)
+    constructor(data: any, userKey: string) {
+        super(data, new Set(["startPt","endPt", "height", "zOffset", "thickness", "targetStorey"]), MappableIfcClasses.IfcWallStandardCase, userKey)
         if(this.isValid) {
             this.startPt = data.userArgs.startPt;
             this.endPt = data.userArgs.endPt;
@@ -32,15 +33,30 @@ export class MappableIfcWallStandardCase extends MappableItem{
         );
     }
     
-    export(): Object {
-        return {
-            ifcClass: MappableIfcClasses.IfcWallStandardCase,
-            startPt: this.startPt,
-            endPt: this.endPt,
-            height: this.height,
-            targetStorey: this.targetStorey,
-            thickness: this.thickness,
-            zOffset: this.zOffset
+    getUserArgs(mappingTable?: MappingTableReader): object {
+        if (mappingTable === undefined) {
+            return {
+                startPt: this.startPt,
+                endPt: this.endPt,
+                height: this.height,
+                targetStorey: this.targetStorey,
+                thickness: this.thickness,
+                zOffset: this.zOffset
+            }
+        } else {
+            const rule = mappingTable.getMappingRule(MappableIfcClasses.IfcWallStandardCase) as UserArgs<MappableIfcClasses.IfcWallStandardCase>;
+            if(rule !== undefined) {
+                return {
+                    [rule.userArgs.startPt]: this.startPt,
+                    [rule.userArgs.endPt]: this.endPt,
+                    [rule.userArgs.height]: this.height,
+                    [rule.userArgs.targetStorey]: this.targetStorey,
+                    [rule.userArgs.thickness]: this.thickness,
+                    [rule.userArgs.zOffset]: this.zOffset
+                }
+            } else {
+                return { }
+            }
         }
     }
 }

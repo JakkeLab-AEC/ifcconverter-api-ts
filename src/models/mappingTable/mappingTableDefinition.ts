@@ -23,7 +23,7 @@ export interface IfcBeamArgs {
     startPt: string,
     endPt: string,
     height: string,
-    targetStorey: string
+    targetStorey: string,
 }
 
 export interface IfcWallStandardCaseArgs {

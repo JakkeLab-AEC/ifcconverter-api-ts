@@ -1,9 +1,10 @@
-import { MappableIfcClasses } from "../../mappingTable/mappingTableDefinition";
+import { MappingTableReader } from "models/mappingTable/mappingTableReader";
+import { MappableIfcClasses, UserArgs } from "../../mappingTable/mappingTableDefinition";
 import { MappableItem } from "../mappableItem";
 
 export class MappableIfcBeam extends MappableItem {
-    constructor(data: any) {
-        super(data, new Set(["startPt", "endPt", "height", "targetStorey", "rotation"]), MappableIfcClasses.IfcBeam);
+    constructor(data: any, userKey: string) {
+        super(data, new Set(["startPt", "endPt", "height", "targetStorey", "rotation"]), MappableIfcClasses.IfcBeam, userKey);
         if(this.isValid) {
             this.startPt = data.userArgs.startPt;
             this.endPt = data.userArgs.endPt;
@@ -29,14 +30,28 @@ export class MappableIfcBeam extends MappableItem {
         );
     }
 
-    export(): Object {
-        return {
-            ifcClass: MappableIfcClasses.IfcBeam,
-            startPt: this.startPt,
-            endPt: this.endPt,
-            height: this.height,
-            targetStorey: this.targetStorey,
-            rotation: this.rotation,
+    getUserArgs(mappingTable?: MappingTableReader): object {
+        if (mappingTable === undefined) {
+            return {
+                ifcClass: MappableIfcClasses.IfcBeam,
+                startPt: this.startPt,
+                endPt: this.endPt,
+                height: this.height,
+                targetStorey: this.targetStorey,
+                rotation: this.rotation,
+            }
+        } else {
+            const rule = mappingTable.getMappingRule(MappableIfcClasses.IfcBeam) as UserArgs<MappableIfcClasses.IfcBeam>;
+            if(rule !== undefined) {
+                return {
+                    [rule.userArgs.startPt]: this.startPt,
+                    [rule.userArgs.endPt]: this.endPt,
+                    [rule.userArgs.height]: this.height,
+                    [rule.userArgs.targetStorey]: this.targetStorey,
+                }
+            } else {
+                return { }
+            }
         }
     }
 }
